@@ -67,12 +67,13 @@ public class RedisBaseUtil {
      * @return
      */
     public boolean expire(String key, long time) {
-        return expire(defaultDB , key,time);
+        return expire(defaultDB , key,time, TimeUnit.SECONDS);
     }
-    public boolean expire(int dbIndex ,String key, long time) {
+
+    public boolean expire(int dbIndex ,String key, long time, TimeUnit timeUnit) {
         try {
             if (time > 0) {
-                knife4jRedisManager.redisTemplate(dbIndex).expire(key, time, TimeUnit.SECONDS);
+                knife4jRedisManager.redisTemplate(dbIndex).expire(key, time, timeUnit);
             }
             return true;
         } catch (Exception e) {

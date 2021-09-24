@@ -36,7 +36,7 @@ import java.util.NoSuchElementException;
 @Import(Knife4jRedisRegister.class)
 @EnableCaching
 @Configuration
-public class Knife4jRedisConfiguration implements EnvironmentAware , ApplicationContextAware {
+public class Knife4jRedisConfiguration implements EnvironmentAware, ApplicationContextAware {
 
     private static final Logger logger = LoggerFactory.getLogger(Knife4jRedisConfiguration.class);
 
@@ -53,8 +53,9 @@ public class Knife4jRedisConfiguration implements EnvironmentAware , Application
         this.environment = environment;
         this.binder = Binder.get(this.environment);
     }
+
     @PostConstruct
-    public Map<String,RedisTemplate> initRedisTemplate(){
+    public Map<String, RedisTemplate> initRedisTemplate() {
         RedisEntity redisEntity;
         try {
             redisEntity = binder.bind("knife4j.redis", RedisEntity.class).get();
@@ -64,7 +65,7 @@ public class Knife4jRedisConfiguration implements EnvironmentAware , Application
 
         //根据多个库实例化出多个连接池和Template
         List<Integer> databases = redisEntity.getDatabases();
-        if(databases == null || databases.size() == 0){
+        if (databases == null || databases.size() == 0) {
             logger.warn("no config property knife4j.redis.databases , default use db0！！！");
             databases.add(0);
         }
@@ -72,18 +73,18 @@ public class Knife4jRedisConfiguration implements EnvironmentAware , Application
         //根据指定的数据库个数来加载对应的RedisTemplate
         for (Integer database : databases) {
             String key = key1 + database;
-            RedisTemplate redisTemplate = applicationContext.getBean(key , RedisTemplate.class);
-            if(redisTemplate != null){
-                redisTemplateMap.put(key , redisTemplate);
+            RedisTemplate redisTemplate = applicationContext.getBean(key, RedisTemplate.class);
+            if (redisTemplate != null) {
+                redisTemplateMap.put(key, redisTemplate);
             }
 
             key = key2 + database;
-            if(stringRedisTemplateMap != null){
-                StringRedisTemplate stringRedisTemplate = applicationContext.getBean(key , StringRedisTemplate.class);
-                stringRedisTemplateMap.put(key , stringRedisTemplate);
+            if (stringRedisTemplateMap != null) {
+                StringRedisTemplate stringRedisTemplate = applicationContext.getBean(key, StringRedisTemplate.class);
+                stringRedisTemplateMap.put(key, stringRedisTemplate);
             }
         }
-        if(redisTemplateMap.size() == 0 && stringRedisTemplateMap.size() == 0){
+        if (redisTemplateMap.size() == 0 && stringRedisTemplateMap.size() == 0) {
             throw new RuntimeException("load redisTemplate failure , please check knife4j.redis property config！！！");
         }
         return redisTemplateMap;
@@ -98,30 +99,38 @@ public class Knife4jRedisConfiguration implements EnvironmentAware , Application
 
 
     @Bean
-    public Knife4jRedisManager knife4jRedisManager(){
-        return new Knife4jRedisManager(redisTemplateMap , stringRedisTemplateMap);
+    public Knife4jRedisManager knife4jRedisManager() {
+        return new Knife4jRedisManager(redisTemplateMap, stringRedisTemplateMap);
     }
 
     @Bean
-    public RedisBaseUtil redisBaseUtil(){
+    public RedisBaseUtil redisBaseUtil() {
         return new RedisBaseUtil();
     }
+
     @Bean
-    public RedisValUtil redisValUtil(){
+    public RedisValUtil redisValUtil() {
         return new RedisValUtil();
     }
+
     @Bean
-    public RedisListUtil redisListUtil(){
+    public RedisListUtil redisListUtil() {
         return new RedisListUtil();
     }
+
     @Bean
-    public RedisHashUtil redisHashUtil(){
+    public RedisHashUtil redisHashUtil() {
         return new RedisHashUtil();
     }
+
     @Bean
-    public RedisSetUtil redisSetUtil(){
+    public RedisSetUtil redisSetUtil() {
         return new RedisSetUtil();
     }
 
+    @Bean
+    public RedisHyperLogUtil redisHyperLogUtil() {
+        return new RedisHyperLogUtil();
+    }
 
 }

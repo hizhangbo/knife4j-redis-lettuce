@@ -25,9 +25,10 @@ public class RedisValUtil extends RedisBaseUtil {
      * @return true成功 false失败
      */
     public boolean set(String key, Object value) {
-        return  set(defaultDB , key ,value);
+        return set(defaultDB, key, value);
     }
-    public boolean set(int dbIndex ,String key, Object value) {
+
+    public boolean set(int dbIndex, String key, Object value) {
         try {
             knife4jRedisManager.redisTemplate(dbIndex).opsForValue().set(key, value);
             return true;
@@ -44,27 +45,30 @@ public class RedisValUtil extends RedisBaseUtil {
      * @return
      */
     public String get(String key) {
-        return get(defaultDB ,key);
+        return get(defaultDB, key);
     }
-    public String get(int dbIndex ,String key) {
+
+    public String get(int dbIndex, String key) {
         Object result = knife4jRedisManager.redisTemplate(dbIndex).opsForValue().get(key);
         return result == null ? null : (String) result;
     }
 
     /**
      * 获取单对象 redis<String,Clazz>
+     *
      * @param key
      * @param clazz
      * @param <T>
      * @return
      */
-    public <T> T get(String key , Class<T> clazz) {
-        return  get(defaultDB ,key , clazz);
+    public <T> T get(String key, Class<T> clazz) {
+        return get(defaultDB, key, clazz);
     }
-    public <T> T get(int dbIndex ,String key , Class<T> clazz) {
+
+    public <T> T get(int dbIndex, String key, Class<T> clazz) {
         Object o = knife4jRedisManager.redisTemplate(dbIndex).opsForValue().get(key);
-        if(o instanceof JSONObject){
-            JSONObject jo = (JSONObject)o;
+        if (o instanceof JSONObject) {
+            JSONObject jo = (JSONObject) o;
             T t = jo.toJavaObject(clazz);
             return t;
         }
@@ -80,10 +84,11 @@ public class RedisValUtil extends RedisBaseUtil {
      * @param timeout 失效时间（秒）
      */
     public void set(String key, Object value, long timeout) {
-        set(defaultDB , key ,value ,timeout);
+        set(defaultDB, key, value, timeout, TimeUnit.SECONDS);
     }
-    public void set(int dbIndex ,String key, Object value, long timeout) {
-        knife4jRedisManager.redisTemplate(dbIndex).opsForValue().set(key, value, timeout, TimeUnit.SECONDS);
+
+    public void set(int dbIndex, String key, Object value, long timeout, TimeUnit timeUnit) {
+        knife4jRedisManager.redisTemplate(dbIndex).opsForValue().set(key, value, timeout, timeUnit);
     }
 
     /**
@@ -97,9 +102,10 @@ public class RedisValUtil extends RedisBaseUtil {
      * @param map
      */
     protected void multiSetObj(Map<String, Object> map) {
-        multiSetObj(defaultDB , map);
+        multiSetObj(defaultDB, map);
     }
-    protected void multiSetObj(int dbIndex ,Map<String, Object> map) {
+
+    protected void multiSetObj(int dbIndex, Map<String, Object> map) {
         knife4jRedisManager.redisTemplate(dbIndex).opsForValue().multiSet(map);
     }
 
@@ -115,9 +121,10 @@ public class RedisValUtil extends RedisBaseUtil {
      *
      */
     protected List<Object> multiGetObj(List<String> keys) {
-        return multiGetObj(defaultDB ,keys);
+        return multiGetObj(defaultDB, keys);
     }
-    protected List<Object> multiGetObj(int dbIndex ,List<String> keys) {
+
+    protected List<Object> multiGetObj(int dbIndex, List<String> keys) {
         return knife4jRedisManager.redisTemplate(dbIndex).opsForValue().multiGet(keys);
     }
 
@@ -129,9 +136,10 @@ public class RedisValUtil extends RedisBaseUtil {
      * @return
      */
     public long incr(String key, long delta) {
-        return incr(defaultDB , key , delta);
+        return incr(defaultDB, key, delta);
     }
-    public long incr(int dbIndex ,String key, long delta) {
+
+    public long incr(int dbIndex, String key, long delta) {
         if (delta < 0) {
             throw new RuntimeException("递增因子必须大于0");
         }
@@ -139,9 +147,10 @@ public class RedisValUtil extends RedisBaseUtil {
     }
 
     public long incrFiled(String key, String filed) {
-        return incrFiled(defaultDB , key , filed);
+        return incrFiled(defaultDB, key, filed);
     }
-    public long incrFiled(int dbIndex ,String key, String filed) {
+
+    public long incrFiled(int dbIndex, String key, String filed) {
         return knife4jRedisManager.redisTemplate(dbIndex).opsForHash().increment(key, filed, 1);
     }
 
@@ -153,9 +162,10 @@ public class RedisValUtil extends RedisBaseUtil {
      * @return
      */
     public long decr(String key, long delta) {
-        return decr(defaultDB , key ,delta);
+        return decr(defaultDB, key, delta);
     }
-    public long decr(int dbIndex ,String key, long delta) {
+
+    public long decr(int dbIndex, String key, long delta) {
         if (delta < 0) {
             throw new RuntimeException("递减因子必须大于0");
         }
@@ -164,75 +174,83 @@ public class RedisValUtil extends RedisBaseUtil {
 
     //存hash
     public void setHash(String key, String filed, String value) {
-        setHash(defaultDB ,key , filed ,value);
+        setHash(defaultDB, key, filed, value);
     }
-    public void setHash(int dbIndex ,String key, String filed, String value) {
+
+    public void setHash(int dbIndex, String key, String filed, String value) {
         knife4jRedisManager.redisTemplate(dbIndex).opsForHash().put(key, filed, value);
     }
 
     //取hash
     public String getHash(String key, String filed) {
-        return getHash(defaultDB ,key ,filed);
+        return getHash(defaultDB, key, filed);
     }
-    public String getHash(int dbIndex ,String key, String filed) {
+
+    public String getHash(int dbIndex, String key, String filed) {
         Object o = knife4jRedisManager.redisTemplate(dbIndex).opsForHash().get(key, filed);
         return (String) o;
     }
 
     public void setList(String key, List<String> list) {
-        setList(defaultDB , key , list);
+        setList(defaultDB, key, list);
     }
-    public void setList(int dbIndex ,String key, List<String> list) {
+
+    public void setList(int dbIndex, String key, List<String> list) {
         knife4jRedisManager.redisTemplate(dbIndex).opsForList().leftPush(key, list);
     }
 
     public List<String> getList(String key) {
-        return getList(defaultDB ,key);
+        return getList(defaultDB, key);
     }
-    public List<String> getList(int dbIndex ,String key) {
+
+    public List<String> getList(int dbIndex, String key) {
         return (List<String>) knife4jRedisManager.redisTemplate(dbIndex).opsForList().leftPop(key);
     }
 
-    public void lPush(String key, String value){
-        lPush(defaultDB , key , value);
+    public void lPush(String key, String value) {
+        lPush(defaultDB, key, value);
     }
-    public void lPush(int dbIndex ,String key, String value){
+
+    public void lPush(int dbIndex, String key, String value) {
         knife4jRedisManager.redisTemplate(dbIndex).opsForList().leftPush(key, value);
     }
 
-    public String lPop(String key){
-        return lPop(defaultDB ,key);
+    public String lPop(String key) {
+        return lPop(defaultDB, key);
     }
-    public String lPop(int dbIndex ,String key){
+
+    public String lPop(int dbIndex, String key) {
         return (String) knife4jRedisManager.redisTemplate(dbIndex).opsForList().leftPop(key);
     }
 
-    public Long listSize(String key){
-        return listSize(defaultDB , key);
+    public Long listSize(String key) {
+        return listSize(defaultDB, key);
     }
-    public Long listSize(int dbIndex ,String key){
+
+    public Long listSize(int dbIndex, String key) {
         return knife4jRedisManager.redisTemplate(dbIndex).opsForList().size(key);
     }
 
 
-
     //查询list中指定范围的内容
-    public List<String> range(String key){
-        return range(defaultDB , key);
+    public List<String> range(String key) {
+        return range(defaultDB, key);
     }
-    public List<String> range(int dbIndex ,String key){
+
+    public List<String> range(int dbIndex, String key) {
         List<Object> range = knife4jRedisManager.redisTemplate(dbIndex).opsForList().range(key, 0, -1);
         List<String> result = new ArrayList<>();
         for (Object o : range) {
-            result.add((String)o);
+            result.add((String) o);
         }
         return result;
     }
 
     public Long ttl(String key) {
-        return ttl(defaultDB , key);
+        return ttl(defaultDB, key);
     }
-    public Long ttl(int dbIndex ,String key) {
+
+    public Long ttl(int dbIndex, String key) {
         return knife4jRedisManager.redisTemplate(dbIndex).opsForValue().getOperations().getExpire(key);
     }
 }

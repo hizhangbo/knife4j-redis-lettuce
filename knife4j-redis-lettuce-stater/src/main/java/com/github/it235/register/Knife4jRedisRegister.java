@@ -100,7 +100,7 @@ public class Knife4jRedisRegister implements EnvironmentAware, ImportBeanDefinit
                 }
                 LettucePoolingClientConfiguration.LettucePoolingClientConfigurationBuilder builder = LettucePoolingClientConfiguration.builder();
                 Duration shutdownTimeout = redisEntity.getLettuce().getShutdownTimeout();
-                if(shutdownTimeout == null){
+                if (shutdownTimeout == null) {
                     shutdownTimeout = binder.bind("knife4j.redis.shutdown-timeout", Duration.class).get();
                 }
                 if (shutdownTimeout != null) {
@@ -130,28 +130,28 @@ public class Knife4jRedisRegister implements EnvironmentAware, ImportBeanDefinit
             redisTemplate.setBeanClass(RedisTemplate.class);
             redisTemplate.getPropertyValues().add("connectionFactory", lettuceConnectionFactory);
             redisTemplate.setAutowireMode(AutowireCapableBeanFactory.AUTOWIRE_BY_NAME);
-            JsonSerialType jsonSerialType = redisEntity.getJsonSerialType();
+//            JsonSerialType jsonSerialType = redisEntity.getJsonSerialType();
             RedisSerializer stringRedisSerializer = null;
-            Jackson2JsonRedisSerializer<Object> jackson2JsonRedisSerializer = null;
-            if(jsonSerialType != null && jsonSerialType == JsonSerialType.Fastjson){
-                //若配置，则采用该方式
-                jackson2JsonRedisSerializer = new CustomFastJsonRedisSerializer<>(Object.class);
-                ParserConfig.getGlobalInstance().setAutoTypeSupport(false);
-                stringRedisSerializer = new CustomStringRedisSerializer();
-            } else {
-                // 内置默认序列化(此处若不设置则采用默认的JDK设置，也可以在使用使自定义序列化方式)
-                jackson2JsonRedisSerializer = new Jackson2JsonRedisSerializer<>(Object.class);
-                ObjectMapper om = new ObjectMapper();
-                om.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.ANY);
-                om.activateDefaultTyping(om.getPolymorphicTypeValidator(), ObjectMapper.DefaultTyping.NON_FINAL);
-                jackson2JsonRedisSerializer.setObjectMapper(om);
-                stringRedisSerializer = new StringRedisSerializer();
-            }
+//            Jackson2JsonRedisSerializer<Object> jackson2JsonRedisSerializer = null;
+//            if(jsonSerialType != null && jsonSerialType == JsonSerialType.Fastjson){
+//                //若配置，则采用该方式
+//                jackson2JsonRedisSerializer = new CustomFastJsonRedisSerializer<>(Object.class);
+//                ParserConfig.getGlobalInstance().setAutoTypeSupport(false);
+//                stringRedisSerializer = new CustomStringRedisSerializer();
+//            } else {
+//                // 内置默认序列化(此处若不设置则采用默认的JDK设置，也可以在使用使自定义序列化方式)
+//                jackson2JsonRedisSerializer = new Jackson2JsonRedisSerializer<>(Object.class);
+//                ObjectMapper om = new ObjectMapper();
+//                om.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.ANY);
+//                om.activateDefaultTyping(om.getPolymorphicTypeValidator(), ObjectMapper.DefaultTyping.NON_FINAL);
+//                jackson2JsonRedisSerializer.setObjectMapper(om);
+            stringRedisSerializer = new StringRedisSerializer();
+//            }
             // key采用String的序列化方式，value采用json序列化方式
-            redisTemplate.getPropertyValues().add("keySerializer",stringRedisSerializer);
-            redisTemplate.getPropertyValues().add("hashKeySerializer",stringRedisSerializer);
-            redisTemplate.getPropertyValues().add("valueSerializer",jackson2JsonRedisSerializer);
-            redisTemplate.getPropertyValues().add("hashValueSerializer",jackson2JsonRedisSerializer);
+            redisTemplate.getPropertyValues().add("keySerializer", stringRedisSerializer);
+            redisTemplate.getPropertyValues().add("hashKeySerializer", stringRedisSerializer);
+            redisTemplate.getPropertyValues().add("valueSerializer", stringRedisSerializer);
+            redisTemplate.getPropertyValues().add("hashValueSerializer", stringRedisSerializer);
 
             //注册Bean
             beanDefinitionRegistry.registerBeanDefinition("redisTemplate" + database, redisTemplate);
