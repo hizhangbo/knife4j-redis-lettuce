@@ -4,9 +4,7 @@ package com.github.it235.util;
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -252,5 +250,17 @@ public class RedisValUtil extends RedisBaseUtil {
 
     public Long ttl(int dbIndex, String key) {
         return knife4jRedisManager.redisTemplate(dbIndex).opsForValue().getOperations().getExpire(key);
+    }
+
+    public Set<String> getKeys(String redisKey) {
+        return getKeys(0,redisKey);
+    }
+    public Set<String> getKeys(int dbIndex ,String redisKey) {
+        Set<Object> keys = knife4jRedisManager.redisTemplate(dbIndex).opsForValue().getOperations().keys(redisKey);
+        Set<String> retKeys = new HashSet<>();
+        for (Object key : keys) {
+            retKeys.add(String.valueOf(key));
+        }
+        return retKeys;
     }
 }
