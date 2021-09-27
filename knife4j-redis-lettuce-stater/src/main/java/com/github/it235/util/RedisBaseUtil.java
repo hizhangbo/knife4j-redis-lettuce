@@ -51,7 +51,7 @@ public class RedisBaseUtil {
         return getKeys(0,redisKey);
     }
     public Set<String> getKeys(int dbIndex ,String redisKey) {
-        Set<Object> keys = knife4jRedisManager.redisTemplate(dbIndex).opsForHash().keys(redisKey);
+        Set<Object> keys = knife4jRedisManager.redisTemplate(dbIndex).keys(redisKey);
         Set<String> retKeys = new HashSet<>();
         for (Object key : keys) {
             retKeys.add(String.valueOf(key));
