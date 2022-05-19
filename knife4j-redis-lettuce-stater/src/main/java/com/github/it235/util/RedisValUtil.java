@@ -253,14 +253,23 @@ public class RedisValUtil extends RedisBaseUtil {
     }
 
     public Set<String> getKeys(String redisKey) {
-        return getKeys(0,redisKey);
+        return getKeys(0, redisKey);
     }
-    public Set<String> getKeys(int dbIndex ,String redisKey) {
+
+    public Set<String> getKeys(int dbIndex, String redisKey) {
         Set<Object> keys = knife4jRedisManager.redisTemplate(dbIndex).opsForValue().getOperations().keys(redisKey);
         Set<String> retKeys = new HashSet<>();
         for (Object key : keys) {
             retKeys.add(String.valueOf(key));
         }
         return retKeys;
+    }
+
+    public Boolean getBit(int dbIndex, String redisKey, long offset) {
+        return knife4jRedisManager.redisTemplate(dbIndex).opsForValue().getBit(redisKey, offset);
+    }
+
+    public Boolean setBit(int dbIndex, String redisKey, long offset, boolean value) {
+        return knife4jRedisManager.redisTemplate(dbIndex).opsForValue().setBit(redisKey, offset, value);
     }
 }
